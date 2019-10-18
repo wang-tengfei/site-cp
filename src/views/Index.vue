@@ -1,13 +1,20 @@
 <template>
   <el-container>
-    <MyHeader/>
-    <!--<el-header>Header</el-header>-->
+    <el-header height="80px">
+      <!--header-->
+      <MyHeader/>
+    </el-header>
     <el-container>
-      <Aside></Aside>
+      <!--左侧菜单-->
+      <el-aside width="250px">
+        <Aside></Aside>
+      </el-aside>
       <el-container>
+        <!--main-->
         <el-main>
           <router-view/>
         </el-main>
+        <!--footer-->
         <el-footer>Footer</el-footer>
       </el-container>
     </el-container>
@@ -42,15 +49,23 @@ export default {
     /*统一设置高度为100%*/
     height: 100%;
   }
-  .el-header, .el-footer {
-    background-color: #B3C0D1;
+  .el-header {
+    background-color: white;
     color: #333;
     text-align: center;
     line-height: 60px;
+    padding: 0;
+  }
+  .el-footer {
+    background-color: white;
+    color: #333;
+    text-align: center;
+    line-height: 60px;
+    padding: 0;
   }
 
   .el-aside {
-    background-color: #D3DCE6;
+    background-color: #545c64;
     color: #333;
     text-align: center;
     line-height: 200px;

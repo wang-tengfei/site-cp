@@ -12,10 +12,20 @@
       <el-container>
         <!--main-->
         <el-main>
-          <router-view/>
+          <div class="breadcrumb">
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+              <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+              <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+              <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+              <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+            </el-breadcrumb>
+          </div>
+          <div class="main-content">
+            <router-view/>
+          </div>
         </el-main>
         <!--footer-->
-        <el-footer>Footer</el-footer>
+        <el-footer>©2019 聆枫科技有限公司版权所有</el-footer>
       </el-container>
     </el-container>
   </el-container>
@@ -53,7 +63,6 @@ export default {
     background-color: white;
     color: #333;
     text-align: center;
-    line-height: 60px;
     padding: 0;
   }
   .el-footer {
@@ -75,7 +84,6 @@ export default {
     background-color: #E9EEF3;
     color: #333;
     text-align: center;
-    line-height: 160px;
   }
 
   body > .el-container {
@@ -89,5 +97,19 @@ export default {
 
   .el-container:nth-child(7) .el-aside {
     line-height: 320px;
+  }
+  .breadcrumb {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .main-contents {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
   }
 </style>

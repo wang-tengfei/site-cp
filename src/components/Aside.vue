@@ -1,7 +1,7 @@
 <template>
   <div class="side-menu">
-    <el-menu :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" class="slider" router style="width: 249px">
-      <el-menu-item index="/home">
+    <el-menu :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" class="slider" router style="">
+      <el-menu-item index="/">
         <i class="el-icon-menu"></i>
         <span slot="title">首页</span>
       </el-menu-item>
@@ -37,7 +37,7 @@ export default {
             },
             {
               index: '/page2',
-              childTitle: '导航1page2'
+              childTitle: '角色管理'
             }
           ]
         },

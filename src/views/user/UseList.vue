@@ -1,24 +1,25 @@
 <template>
   <div class="content">
     <div class="data-header">
-      <el-form :rules="userRules" label-width="100px">
+      <el-form v-model="searchData" :rules="userRules" label-width="100px">
         <el-row>
           <el-col :span="7">
             <el-form-item label="用户名">
-              <el-input v-model="name"></el-input>
+              <el-input v-model="searchData.userName"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="省份">
-              <el-select v-model="province" style="width: 100%" placeholder="请选择省份">
-                <el-option label="上海" value="上海"></el-option>
-                <el-option label="北京" value="beijing"></el-option>
+          <el-col :span="7">
+            <el-form-item label="状态">
+              <el-select placeholder="请选择性别" v-model="searchData.status" style="width: 100%">
+                <el-option label="全部"></el-option>
+                <el-option label="正常" value="1"></el-option>
+                <el-option label="禁用" value="2"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <el-form-item label="时间">
-              <el-date-picker v-model="date" style="width: 100%" type="datetime"  placeholder="选择日期时间"></el-date-picker>
+              <el-date-picker v-model="searchData.createTime" type="datetime"  placeholder="选择日期时间"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="3">
@@ -28,166 +29,79 @@
       </el-form>
     </div>
     <div class="data-info">
-      <el-table :data="tableData" v-loading="loading" border style="width: 100%" max-height="550" stripe highlight-current-row>
-        <el-table-column fixed type="selection" label="" width="50"></el-table-column>
-        <el-table-column fixed type="index" label="序号" width="50"></el-table-column>
+      <el-table :data="tableData" v-loading="loading" border height="548px" size="small" stripe highlight-current-row>
+        <el-table-column type="selection" label=""></el-table-column>
+        <el-table-column type="index" label="序号" min-width="50px"></el-table-column>
         <el-table-column prop="name" label="姓名" width="120">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
-              <p>姓名: {{ scope.row.name }}</p>
-              <p>住址: {{ scope.row.address }}</p>
+              <p>姓名: {{ scope.row.userName }}</p>
+              <p>邮箱: {{ scope.row.email }}</p>
+              <p>手机号: {{ scope.row.phoneNumber }}</p>
               <div slot="reference" class="name-wrapper">
-                {{ scope.row.name }}
+                {{ scope.row.userName }}
               </div>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="province" label="省份" width="120"></el-table-column>
-        <el-table-column prop="city" label="市区" width="120"></el-table-column>
-        <el-table-column prop="address" label="地址" width="300"></el-table-column>
-        <el-table-column prop="zip" label="邮编" width="120"></el-table-column>
-        <el-table-column prop="date" label="日期" width="150"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="100">
-          <template slot="header" slot-scope="scope">
+        <el-table-column prop="age" label="年龄" ></el-table-column>
+        <el-table-column prop="email" label="邮箱" min-width="120px"></el-table-column>
+        <el-table-column prop="phoneNumber" label="手机号"></el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template  slot-scope="scope">
+            <span v-if="scope.row.status === 1">正常</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="日期" :formatter="formatterDate"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100px">
+          <template slot="header"  slot-scope="scope">
             <el-button @click="addUser()" >添加</el-button>
           </template>
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">编辑</el-button>
+          <template  slot-scope="scope">
+            <el-button @click="editUser(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="deleteDate(scope.row)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="block">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
-                       :page-sizes="[100, 200, 300, 400]" :page-size="100" :total="400"
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageIndex"
+                       :page-sizes="[10, 20, 50]" :page-size="pageSize" :total="totalSize"
                        layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </div>
     </div>
-    <!--弹窗信息-->
-    <el-dialog title="编辑用户信息" :visible.sync="isShowEdit" width="600">
-      <div class="edit-info">
-        <el-form v-model="editUserData" :rules="userRules" label-width="100px">
-          <el-form-item label="用户名" prop="name">
-            <el-input v-model="editUserData.name"></el-input>
-          </el-form-item>
-          <el-form-item label="省份" prop="province">
-            <el-col :span="11">
-              <el-select v-model="editUserData.province" style="width: 100%" placeholder="请选择省份">
-                <el-option label="上海" value="上海"></el-option>
-                <el-option label="北京" value="beijing"></el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="2">
-              <span style="width: 100%">-</span>
-            </el-col>
-            <el-col :span="11">
-              <el-select v-model="editUserData.city" style="width: 100%" placeholder="请选择区域">
-                <el-option label="上海" value="上海"></el-option>
-                <el-option label="北京" value="beijing"></el-option>
-              </el-select>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="地址" prop="address">
-            <el-input v-model="editUserData.address"></el-input>
-          </el-form-item>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="邮编" prop="zip">
-                <el-input v-model="editUserData.zip"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="时间" prop="date">
-                <el-date-picker v-model="editUserData.date" style="width: 100%" type="datetime"  placeholder="选择日期时间"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
-      <span slot="footer" class="dialog-footer">
-    <el-button @click="isShowEdit = false">取 消</el-button>
-    <el-button type="primary" @click="isShowEdit = false">确 定</el-button>
-  </span>
+    <!--添加用户-->
+    <el-dialog title="添加用户信息" class="dialog-title" :visible.sync="isShowAdd" width="700px">
+      <add-user v-on:isShowAdd=addDialog :getTableData="getTableData"></add-user>
+    </el-dialog>
+    <!--编辑用户-->
+    <el-dialog title="编辑用户信息" class="dialog-title" :visible.sync="isShowEdit" width="700px">
+      <edit-user v-on:isShowEdit=editDialog v-bind:editUserData="editUserData" :getTableData="getTableData"></edit-user>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import EditUser from '@/views/user/EditUser'
+import AddUser from '@/views/user/AddUser'
 export default {
   name: 'UserList',
-  components: {EditUser},
-  methods: {
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
-    },
-    onLoadedData () {
-      this.loading = false
-    },
-    deleteDate (row) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
-    handleClick (row) {
-      this.editUserData = row
-      this.isShowEdit = true
-    }
+  components: {
+    'add-user': AddUser,
+    'edit-user': EditUser
   },
   data () {
     return {
       editUserData: '',
-      date: '',
-      name: '',
+      searchData: {},
       province: '',
+      isShowAdd: false,
       isShowEdit: false,
-      currentPage4: 4,
-      loading: false,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1517 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1519 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1516 弄',
-        zip: 200333
-      }],
+      loading: true,
+      tableData: [],
+      pageIndex: 1,
+      pageSize: 10,
+      totalSize: 0,
       userRules: {
         name: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
@@ -198,22 +112,104 @@ export default {
         ]
       }
     }
+  },
+  created () {
+    this.getTableData()
+  },
+  methods: {
+    formatterDate (row, column, cellValue) {
+      return this.$moment(cellValue).format('YYYY-MM-DD hh:mm')
+    },
+    getTableData (searchCondition) {
+      this.queryData = {page_index: this.pageIndex, page_size: this.pageSize}
+      if (searchCondition != null) {
+        Object.assign(this.queryData, searchCondition)
+      }
+      this.$axios.get('/vue/users-page', {params: this.queryData}).then(response => {
+        const data = response.data
+        if (data.code === 200) {
+          this.tableData = data.result.list
+          this.pageIndex = data.result.pageIndex
+          this.pageSize = data.result.pageSize
+          this.totalSize = data.result.total
+          this.loading = false
+        }
+      })
+    },
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.getTableData()
+    },
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
+      this.pageIndex = val
+      this.getTableData()
+    },
+    searchUserData () {
+      return this.getTableData(this.searchData)
+    },
+    deleteDate (row) {
+      this.$confirm('确定删除用户 <span style="color: red">' + row.userName + ' </span>吗？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(() => {
+        this.$axios.delete('/vue/user/' + row.id).then(response => {
+          let data = response.data
+          if (data.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getTableData()
+          } else {
+            this.$message({
+              type: 'error',
+              message: '删除失败：' + data.msg
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    editUser (row) {
+      this.editUserData = row
+      this.isShowEdit = true
+    },
+    addUser () {
+      this.isShowAdd = true
+    },
+    editDialog (e) {
+      console.log(e)
+      this.isShowEdit = e
+    },
+    addDialog (e) {
+      console.log(e)
+      this.isShowAdd = e
+    }
   }
 }
 </script>
 <style scoped>
+  @import '../../common/css/common.css';
   .content {
     width: 100%;
     padding: 0;
     margin: 0 auto;
   }
   .data-header {
-    height: 80px;
+    height: 50px;
     width: 1150px;
     margin: 0 auto;
   }
   .data-info {
-    width: 1150px;
+    width: 1250px;
     margin: 0 auto;
   }
   .block {
@@ -221,8 +217,5 @@ export default {
     height: 80px;
     margin: 0 auto;
     padding-top: 10px;
-  }
-  .edit-info {
-    width: 100%;
   }
 </style>

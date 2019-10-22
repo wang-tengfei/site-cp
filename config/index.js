@@ -10,7 +10,16 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {                             // '/api': 匹配项
+        target: "http://localhost:8788",   // 接口的域名
+        changeOrigin: true,       // 如果接口跨域，需要进行这个参数配置
+        secure: false,           // 如果是https接口，需要配置这个参数
+        pathRewrite: {          // 如果接口本身没有 /api 需要通过pathRewrite来重写了地址, 如果有则不需要页面重写
+          "^/api": ""          // 把匹配到的  api 替换成相应的值
+        }
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

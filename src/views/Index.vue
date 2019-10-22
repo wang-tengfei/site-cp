@@ -2,24 +2,16 @@
   <el-container>
     <el-header height="80px">
       <!--header-->
-      <MyHeader/>
+      <my-header v-on:changeIndex="updateAside"></my-header>
     </el-header>
     <el-container>
       <!--左侧菜单-->
       <el-aside width="250px">
-        <Aside></Aside>
+        <my-aside v-bind:updateMenuList="menuList"></my-aside>
       </el-aside>
       <el-container>
         <!--main-->
         <el-main>
-          <div class="breadcrumb">
-            <el-breadcrumb separator-class="el-icon-arrow-right">
-              <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-              <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-              <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-              <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-            </el-breadcrumb>
-          </div>
           <div class="main-content">
             <router-view/>
           </div>
@@ -36,16 +28,59 @@ import MyHeader from '@/components/MyHeader'
 import Aside from '@/components/Aside'
 export default {
   name: 'Index',
-  components: {MyHeader, Aside},
+  components: {'my-header': MyHeader, 'my-aside': Aside},
   data () {
-    const item = {
-      date: '2016-05-02',
-      name: '王小虎',
-      address: '上海市普陀区金沙江路 1518 弄'
-    }
     return {
-      tableData: Array(20).fill(item)
+      userName: this.$route.query,
+      menuList: '',
+      menuList1: [
+        {
+          id: '1',
+          title: '账号管理',
+          icon: 'el-icon-location',
+          children: [
+            {
+              index: '/user-list',
+              childTitle: '用户管理'
+            },
+            {
+              index: '/role-list',
+              childTitle: '角色管理'
+            }
+          ]
+        },
+        {
+          id: '2',
+          title: '日志管理',
+          icon: 'el-icon-location',
+          children: [
+            {
+              index: '/log-login',
+              childTitle: '登录日志'
+            },
+            {
+              index: '/log-operation',
+              childTitle: '操作日志'
+            }
+          ]
+        }
+      ],
+      menuList2: []
     }
+  },
+  methods: {
+    updateAside (e) {
+      console.log('当前菜单为' + e)
+      if (e === '1') {
+        this.menuList = this.menuList1
+      }
+      if (e === '2') {
+        this.menuList = this.menuList2
+      }
+    }
+  },
+  created () {
+    this.menuList = this.menuList1
   }
 }
 </script>
@@ -97,10 +132,6 @@ export default {
 
   .el-container:nth-child(7) .el-aside {
     line-height: 320px;
-  }
-  .breadcrumb {
-    width: 100%;
-    margin-bottom: 10px;
   }
   .main-contents {
     position: relative;

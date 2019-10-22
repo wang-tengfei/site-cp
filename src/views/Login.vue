@@ -38,7 +38,8 @@ export default {
   },
   methods: {
     login () {
-      return this.$router.push('/')
+      console.log(this.userName)
+      return this.$router.push({path: '/', data: {username: this.userName}})
     }
   }
 }

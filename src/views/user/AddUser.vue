@@ -1,46 +1,46 @@
 <template>
   <div class="edit-info">
-    <el-form v-model="editUserData" label-width="100px">
+    <el-form v-model="addUserData" label-width="100px">
       <el-form-item label="用户名" prop="name">
-        <el-input v-model="editUserData.userName"></el-input>
+        <el-input v-model="addUserData.userName"></el-input>
       </el-form-item>
       <el-row>
         <el-col :span="12">
           <el-form-item label="年龄" prop="age">
-            <el-input v-model="editUserData.age"></el-input>
+            <el-input v-model="addUserData.age"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="手机号" prop="address">
-            <el-input v-model="editUserData.phoneNumber"></el-input>
+          <el-form-item label="手机号" prop="phoneNumber">
+            <el-input v-model="addUserData.phoneNumber"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-form-item label="邮箱" prop="zip">
-        <el-input v-model="editUserData.email"></el-input>
+        <el-input v-model="addUserData.email"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="closeEditDialog">取 消</el-button>
-      <el-button type="primary" @click="editUser(editUserData)">确 定</el-button>
+      <el-button @click="closeAddDialog">取 消</el-button>
+      <el-button type="primary" @click="editUser()">确 定</el-button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EditUser',
+  name: 'AddUser',
   data () {
     return {
-      test: false
+      addUserData: {}
     }
   },
   methods: {
     closeEditDialog () {
-      this.$emit('isShowEdit', false)
+      this.$emit('isShowAdd', false)
     },
-    editUser (editUserData) {
-      this.$axios.put('/vue/user/' + editUserData.id, editUserData).then(response => {
+    editUser () {
+      this.$axios.post('/vue/user/', this.addUserData).then(response => {
         let data = response.data
         if (data.code === 200) {
           this.$message({
@@ -59,12 +59,12 @@ export default {
     }
   },
   props: {
-    editUserData: {
-      type: Object,
-      request: true
-    },
     getTableData: {
       type: Function,
+      request: true
+    },
+    closeAddDialog: {
+      type: Boolean,
       request: true
     }
   }

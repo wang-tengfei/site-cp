@@ -7,7 +7,7 @@
       <el-form label-width="80px">
         <el-input v-model="userName" placeholder="请输入用户名" style="width: 100%"></el-input>
         <div style="margin-top: 20px"></div>
-        <el-input v-model="password" placeholder="请输入密码" style="width: 100%"></el-input>
+        <el-input type="password" v-model="password" placeholder="请输入密码" style="width: 100%"></el-input>
       </el-form>
       <div>
         <div style="margin-top: 20px"></div>
@@ -38,8 +38,22 @@ export default {
   },
   methods: {
     login () {
-      console.log(this.userName)
-      return this.$router.push({path: '/', data: {username: this.userName}})
+      // let loginInfo = {'username': this.userName, 'password': this.password}
+      let param = new URLSearchParams()
+      param.append('username', this.userName)
+      param.append('password', this.password)
+      this.$axios.post('/vue/login', param).then(response => {
+        let data = response.data
+        if (data.code === 200) {
+          localStorage.setItem('loginUser', JSON.stringify(data.result))
+          return this.$router.push({path: '/', data: {username: this.userName}})
+        } else {
+          this.$message({
+            type: 'error',
+            message: '登录失败：' + data.msg
+          })
+        }
+      })
     }
   }
 }

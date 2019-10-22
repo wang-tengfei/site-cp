@@ -4,6 +4,9 @@
       <el-form-item label="用户名" prop="name">
         <el-input v-model="addUserData.userName"></el-input>
       </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input type="password" show-password v-model="addUserData.password"></el-input>
+      </el-form-item>
       <el-row>
         <el-col :span="12">
           <el-form-item label="年龄" prop="age">
@@ -36,7 +39,7 @@ export default {
     }
   },
   methods: {
-    closeEditDialog () {
+    closeAddDialog () {
       this.$emit('isShowAdd', false)
     },
     editUser () {
@@ -61,10 +64,6 @@ export default {
   props: {
     getTableData: {
       type: Function,
-      request: true
-    },
-    closeAddDialog: {
-      type: Boolean,
       request: true
     }
   }

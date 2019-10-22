@@ -28,21 +28,27 @@
           </span>
           <el-dropdown-menu slot="dropdown" split-button>
             <el-dropdown-item @click.native="showUserInfo()">用户信息</el-dropdown-item>
-            <el-dropdown-item @click.native="updatePassword()">修改密码</el-dropdown-item>
+            <el-dropdown-item @click.native="showPassDialog()">修改密码</el-dropdown-item>
             <el-dropdown-item @click.native="loginOut()">注销登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </span>
     </div>
     <!--用户信息弹窗-->
-    <el-dialog title="用户信息" class="dialog-title" :visible.sync="userInfoDialog" width="800px">
-      <div class="edit-info">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
-        </el-table>
-      </div>
+    <el-dialog title="用户信息" class="dialog-title" :visible.sync="userInfoDialog" width="600px">
+      <el-row>
+        <el-col class="info-name" :span="4" align="right">用户名:</el-col>
+        <el-col :span="7" align="left" offset="1">{{userData.userName}}</el-col>
+        <el-col class="info-name" :span="4" align="right">邮箱:</el-col>
+        <el-col :span="7" align="left" offset="1">{{userData.email}}</el-col>
+      </el-row>
+      <div style="height: 20px"></div>
+      <el-row>
+        <el-col class="info-name" :span="4" align="right">手机号:</el-col>
+        <el-col :span="7" align="left" offset="1">{{userData.phoneNumber}}</el-col>
+        <el-col class="info-name" :span="4" align="right">年龄:</el-col>
+        <el-col :span="7" align="left" offset="1">{{userData.age}}</el-col>
+      </el-row>
     </el-dialog>
     <!--未读消息弹窗-->
     <el-dialog title="未读消息" class="dialog-title" :visible.sync="showMsgDialog" width="800px">
@@ -69,8 +75,8 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="isShowEdit = false">取 消</el-button>
-          <el-button type="primary" @click="isShowEdit = false">确 定</el-button>
+          <el-button @click="updatePasswordDialog = false">取 消</el-button>
+          <el-button type="primary" @click="updatePassword()">确 定</el-button>
         </div>
       </div>
     </el-dialog>
@@ -85,7 +91,9 @@ export default {
       oldPassword: '',
       newPassword: '',
       repeatPassword: '',
-      userName: 'Wang Tengfei',
+      userName: '',
+      userId: '',
+      userData: {},
       userInfoDialog: false,
       showMsgDialog: false,
       updatePasswordDialog: false,
@@ -119,12 +127,61 @@ export default {
     showMsg () {
       this.showMsgDialog = true
     },
-    updatePassword () {
+    showPassDialog () {
       this.updatePasswordDialog = true
+    },
+    updatePassword () {
+      this.$axios.get('/vue/user/' + this.userId).then(repsonse => {
+        let data = repsonse.data
+        if (data.code === 200) {
+          let pass = data.result.password
+          if (pass !== this.oldPassword) {
+            this.$message({
+              type: 'warning',
+              message: '原始密码错误!'
+            })
+          }
+        }
+      })
+      if (this.newPassword !== this.repeatPassword) {
+        this.$message({
+          type: 'warning',
+          message: '两次密码不一致!'
+        })
+        return
+      }
+      let param = new URLSearchParams()
+      param.append('password', this.newPassword)
+      this.$axios.put('/vue/update-password/' + this.userId, param).then(response => {
+        let data = response.data
+        if (data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '添加成功成功!'
+          })
+          this.updatePasswordDialog = false
+        } else {
+          this.$message({
+            type: 'error',
+            message: '添加失败：' + data.msg
+          })
+        }
+      })
     },
     showUserInfo () {
       this.userInfoDialog = true
+      this.$axios.get('/vue/user/' + this.userId).then(repsonse => {
+        let data = repsonse.data
+        if (data.code === 200) {
+          this.userData = data.result
+        }
+      })
     }
+  },
+  created () {
+    let loginUser = JSON.parse(localStorage.getItem('loginUser'))
+    this.userName = loginUser.userName
+    this.userId = loginUser.userId
   }
 }
 </script>
@@ -162,5 +219,8 @@ export default {
     height: 100%;
     padding-top: 30px;
     float: right;
+  }
+  .info-name {
+    font-weight: bolder;
   }
 </style>

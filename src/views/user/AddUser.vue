@@ -1,9 +1,18 @@
 <template>
   <div class="edit-info">
     <el-form v-model="addUserData" label-width="100px">
-      <el-form-item label="用户名" prop="name">
-        <el-input v-model="addUserData.userName"></el-input>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="用户名" prop="name">
+            <el-input v-model="addUserData.userName"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="昵称" prop="nickName">
+            <el-input v-model="addUserData.nickName"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-form-item label="密码" prop="password">
         <el-input type="password" show-password v-model="addUserData.password"></el-input>
       </el-form-item>
@@ -21,6 +30,9 @@
       </el-row>
       <el-form-item label="邮箱" prop="zip">
         <el-input v-model="addUserData.email"></el-input>
+      </el-form-item>
+      <el-form-item label="地址" prop="address">
+        <el-input v-model="addUserData.address"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -48,9 +60,9 @@ export default {
         if (data.code === 200) {
           this.$message({
             type: 'success',
-            message: '添加成功成功!'
+            message: '添加成功!'
           })
-          this.closeEditDialog()
+          this.closeAddDialog()
           this.getTableData()
         } else {
           this.$message({

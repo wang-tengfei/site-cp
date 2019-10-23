@@ -38,16 +38,23 @@
     <el-dialog title="用户信息" class="dialog-title" :visible.sync="userInfoDialog" width="600px">
       <el-row>
         <el-col class="info-name" :span="4" align="right">用户名:</el-col>
-        <el-col :span="7" align="left" offset="1">{{userData.userName}}</el-col>
-        <el-col class="info-name" :span="4" align="right">邮箱:</el-col>
-        <el-col :span="7" align="left" offset="1">{{userData.email}}</el-col>
+        <el-col :span="7" align="left" :offset=1>{{userData.userName}}</el-col>
+        <el-col class="info-name" :span="4" align="right">昵称:</el-col>
+        <el-col :span="7" align="left" :offset=1>{{userData.nickName}}</el-col>
       </el-row>
       <div style="height: 20px"></div>
       <el-row>
         <el-col class="info-name" :span="4" align="right">手机号:</el-col>
-        <el-col :span="7" align="left" offset="1">{{userData.phoneNumber}}</el-col>
+        <el-col :span="7" align="left" :offset=1>{{userData.phoneNumber}}</el-col>
+        <el-col class="info-name" :span="4" align="right">邮箱:</el-col>
+        <el-col :span="7" align="left" :offset=1>{{userData.email}}</el-col>
+      </el-row>
+      <div style="height: 20px"></div>
+      <el-row>
+        <el-col class="info-name" :span="4" align="right">地址:</el-col>
+        <el-col :span="7" align="left" :offset=1>{{userData.address}}</el-col>
         <el-col class="info-name" :span="4" align="right">年龄:</el-col>
-        <el-col :span="7" align="left" offset="1">{{userData.age}}</el-col>
+        <el-col :span="7" align="left" :offset=1>{{userData.age}}</el-col>
       </el-row>
     </el-dialog>
     <!--未读消息弹窗-->
@@ -65,13 +72,13 @@
       <div class="edit-info">
         <el-form label-width="100px">
           <el-form-item label="原始密码" prop="password">
-            <el-input v-model="oldPassword" placeholder="请输入旧密码" style="width: 300px"></el-input>
+            <el-input v-model="oldPassword" type="password" show-password placeholder="请输入旧密码" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="新密码" prop="password">
-            <el-input v-model="newPassword" placeholder="请输入新密码" style="width: 300px"></el-input>
+            <el-input v-model="newPassword" type="password" show-password placeholder="请输入新密码" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="password">
-            <el-input v-model="repeatPassword" placeholder="请确认新密码" style="width: 300px"></el-input>
+            <el-input v-model="repeatPassword" type="password" show-password placeholder="请确认新密码" style="width: 300px"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -118,8 +125,30 @@ export default {
   },
   methods: {
     loginOut () {
-      console.log('注销用户信息')
-      return this.$router.push('/login')
+      this.$confirm('是否注销当前用户？', '警告', {
+        confirmButtonText: '注销',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(() => {
+        console.log('注销用户信息')
+        localStorage.getItem('')
+        this.$axios.post('/vue/login-out/' + this.userId).then(res => {
+          let data = res.data
+          if (data.code === 200) {
+            return this.$router.push('/login')
+          }
+          this.$message({
+            type: 'error',
+            message: data.msg
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     },
     handleSelect (index) {
       this.$emit('changeIndex', index)
@@ -131,47 +160,56 @@ export default {
       this.updatePasswordDialog = true
     },
     updatePassword () {
-      this.$axios.get('/vue/user/' + this.userId).then(repsonse => {
-        let data = repsonse.data
-        if (data.code === 200) {
-          let pass = data.result.password
-          if (pass !== this.oldPassword) {
+      this.$axios.get('/vue/user/' + this.userId).then(response => {
+        let userInfo = response.data
+        // 校验返回码
+        if (userInfo.code !== 200) {
+          this.$message({
+            type: 'warning',
+            message: userInfo.msg
+          })
+          return
+        }
+        // 校验原始密码的有效性
+        if (userInfo.result.password !== this.oldPassword) {
+          this.$message({
+            type: 'warning',
+            message: '原始密码错误!'
+          })
+          return
+        }
+        // 校验新密码两次输入是否一致
+        if (this.newPassword !== this.repeatPassword) {
+          this.$message({
+            type: 'warning',
+            message: '两次密码不一致!'
+          })
+          return
+        }
+        // 修改密码
+        let param = new URLSearchParams()
+        param.append('password', this.newPassword)
+        this.$axios.post('/vue/user/password/' + this.userId, param).then(response => {
+          let data = response.data
+          if (data.code === 200) {
             this.$message({
-              type: 'warning',
-              message: '原始密码错误!'
+              type: 'success',
+              message: '修改密码成功!'
+            })
+            this.updatePasswordDialog = false
+          } else {
+            this.$message({
+              type: 'error',
+              message: '修改密码失败：' + data.msg
             })
           }
-        }
-      })
-      if (this.newPassword !== this.repeatPassword) {
-        this.$message({
-          type: 'warning',
-          message: '两次密码不一致!'
         })
-        return
-      }
-      let param = new URLSearchParams()
-      param.append('password', this.newPassword)
-      this.$axios.put('/vue/update-password/' + this.userId, param).then(response => {
-        let data = response.data
-        if (data.code === 200) {
-          this.$message({
-            type: 'success',
-            message: '添加成功成功!'
-          })
-          this.updatePasswordDialog = false
-        } else {
-          this.$message({
-            type: 'error',
-            message: '添加失败：' + data.msg
-          })
-        }
       })
     },
     showUserInfo () {
       this.userInfoDialog = true
-      this.$axios.get('/vue/user/' + this.userId).then(repsonse => {
-        let data = repsonse.data
+      this.$axios.get('/vue/user/' + this.userId).then(response => {
+        let data = response.data
         if (data.code === 200) {
           this.userData = data.result
         }

@@ -1,9 +1,18 @@
 <template>
   <div class="edit-info">
     <el-form v-model="editUserData" label-width="100px">
-      <el-form-item label="用户名" prop="name">
-        <el-input v-model="editUserData.userName"></el-input>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="用户名" prop="name">
+            <el-input v-model="editUserData.userName" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="昵称" prop="nickName">
+            <el-input v-model="editUserData.nickName"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-col :span="12">
           <el-form-item label="年龄" prop="age">
@@ -18,6 +27,9 @@
       </el-row>
       <el-form-item label="邮箱" prop="zip">
         <el-input v-model="editUserData.email"></el-input>
+      </el-form-item>
+      <el-form-item label="地址" prop="address">
+        <el-input v-model="editUserData.address"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

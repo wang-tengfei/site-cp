@@ -3,26 +3,27 @@
     <div class="data-header">
       <el-form v-model="searchData" :rules="userRules" label-width="100px">
         <el-row>
-          <el-col :span="7">
+          <el-col :span="5">
             <el-form-item label="用户名">
-              <el-input v-model="searchData.userName"></el-input>
+              <el-input v-model="searchData.username"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="5">
             <el-form-item label="状态">
-              <el-select placeholder="请选择性别" v-model="searchData.status" style="width: 100%">
-                <el-option label="全部"></el-option>
+              <el-select placeholder="请选状态" v-model="searchData.status" clearable style="width: 100%">
+                <el-option label="全部" value=""></el-option>
                 <el-option label="正常" value="1"></el-option>
                 <el-option label="禁用" value="2"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="12">
             <el-form-item label="时间">
-              <el-date-picker v-model="searchData.createTime" type="datetime"  placeholder="选择日期时间"></el-date-picker>
+              <el-date-picker v-model="searchTime" type="datetimerange" :picker-options="pickerOptions" @blur="getTableTime"
+                              range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="2">
             <el-button @click="searchUserData()" >搜索</el-button>
           </el-col>
         </el-row>
@@ -44,12 +45,14 @@
             </el-popover>
           </template>
         </el-table-column>
+        <el-table-column prop="nickName" label="昵称" width="120"></el-table-column>
         <el-table-column prop="age" label="年龄" ></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="120px"></el-table-column>
         <el-table-column prop="phoneNumber" label="手机号"></el-table-column>
         <el-table-column prop="status" label="状态">
           <template  slot-scope="scope">
             <span v-if="scope.row.status === 1">正常</span>
+            <span v-if="scope.row.status === 2">禁用</span>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="日期" :formatter="formatterDate"></el-table-column>
@@ -94,6 +97,7 @@ export default {
     return {
       editUserData: '',
       searchData: {},
+      searchTime: {},
       province: '',
       isShowAdd: false,
       isShowEdit: false,
@@ -110,6 +114,33 @@ export default {
         province: [
           { required: true, message: '请选择活动区域', trigger: 'change' }
         ]
+      },
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
       }
     }
   },
@@ -117,6 +148,9 @@ export default {
     this.getTableData()
   },
   methods: {
+    getTableTime () {
+      console.log(this.searchTime)
+    },
     formatterDate (row, column, cellValue) {
       return this.$moment(cellValue).format('YYYY-MM-DD hh:mm')
     },
@@ -147,6 +181,14 @@ export default {
       this.getTableData()
     },
     searchUserData () {
+      if (this.searchTime == null || this.searchTime.length <= 0) {
+        delete this.searchData['startTime']
+        delete this.searchData['endTime']
+      } else {
+        let startTime = parseInt(this.searchTime[0].getTime())
+        let endTime = parseInt(this.searchTime[1].getTime())
+        Object.assign(this.searchData, {'startTime': startTime, 'endTime': endTime})
+      }
       return this.getTableData(this.searchData)
     },
     deleteDate (row) {

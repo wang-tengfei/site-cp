@@ -51,13 +51,13 @@ export default {
     closeEditDialog () {
       this.$emit('isShowEdit', false)
     },
-    editUser (editUserData) {
+    addUser (editUserData) {
       this.$axios.put('/vue/user/' + editUserData.id, editUserData).then(response => {
         let data = response.data
         if (data.code === 200) {
           this.$message({
             type: 'success',
-            message: '添加成功成功!'
+            message: '修改成功!'
           })
           this.closeEditDialog()
           this.getTableData()

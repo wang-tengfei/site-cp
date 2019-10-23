@@ -45,14 +45,28 @@
       <div style="height: 20px"></div>
       <el-row>
         <el-col class="info-name" :span="4" align="right">手机号:</el-col>
-        <el-col :span="7" align="left" :offset=1>{{userData.phoneNumber}}</el-col>
+        <el-col :span="7" align="left" :offset=1>
+          <template v-if="userData.phoneNumber === null || userData.phoneNumber === undefined">
+            -
+          </template>
+          <template v-else>
+            {{userData.phoneNumber}}
+          </template>
+        </el-col>
         <el-col class="info-name" :span="4" align="right">邮箱:</el-col>
         <el-col :span="7" align="left" :offset=1>{{userData.email}}</el-col>
       </el-row>
       <div style="height: 20px"></div>
       <el-row>
         <el-col class="info-name" :span="4" align="right">地址:</el-col>
-        <el-col :span="7" align="left" :offset=1>{{userData.address}}</el-col>
+        <el-col :span="7" align="left" :offset=1>
+          <template v-if="userData.address === null || userData.address === undefined">
+            -
+          </template>
+          <template v-else>
+            {{userData.address}}
+          </template>
+        </el-col>
         <el-col class="info-name" :span="4" align="right">年龄:</el-col>
         <el-col :span="7" align="left" :offset=1>{{userData.age}}</el-col>
       </el-row>
@@ -104,23 +118,7 @@ export default {
       userInfoDialog: false,
       showMsgDialog: false,
       updatePasswordDialog: false,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      tableData: {}
     }
   },
   methods: {

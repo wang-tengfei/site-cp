@@ -4,12 +4,12 @@
       <div class="login-title">
         <span>用户登录</span>
       </div>
-      <el-form label-width="80px" v-model="loginData" :rules="loginRules">
-        <el-form-item prop="checkName" label-width="0">
+      <el-form label-width="80px" status-icon :model="loginData" ref="loginData" :rules="loginRules" class="demo-ruleForm">
+        <el-form-item prop="userName" label-width="0">
           <el-input v-model="loginData.userName" placeholder="请输入用户名" style="width: 100%"></el-input>
         </el-form-item>
-        <el-form-item prop="checkPass" label-width="0">
-          <el-input type="password" v-model="loginData.password" placeholder="请输入密码" style="width: 100%"></el-input>
+        <el-form-item prop="password" label-width="0">
+          <el-input type="password" show-password v-model="loginData.password" placeholder="请输入密码" style="width: 100%"></el-input>
         </el-form-item>
       </el-form>
       <div>
@@ -23,7 +23,7 @@
           </el-col>
         </el-row>
         <div style="margin-top: 30px"></div>
-        <el-button type="primary" style="width: 100%" @click="login(loginData)">登录</el-button>
+        <el-button type="primary" style="width: 100%" @click="login('loginData')">登录</el-button>
       </div>
     </div>
   </div>
@@ -33,26 +33,6 @@
 export default {
   name: 'Login',
   data () {
-    let validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.loginData.password !== '') {
-          this.$refs.loginData.validateField('checkName')
-        }
-        callback()
-      }
-    }
-    let validateName = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入用户名'))
-      } else {
-        if (this.loginData.userName !== '') {
-          this.$refs.loginData.validateField('checkPass')
-        }
-        callback()
-      }
-    }
     return {
       loginData: {
         userName: '',
@@ -60,18 +40,19 @@ export default {
       },
       checked: false,
       loginRules: {
-        checkName: [
-          { validator: validateName, trigger: 'blur' }
+        userName: [
+          // { validator: validateName, trigger: 'blur' }
+          { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
-        checkPass: [
-          { validator: validatePass, trigger: 'blur' }
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
-    login (loginData) {
-      this.$refs[loginData].validate((valid) => {
+    login (formName) {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           let param = new URLSearchParams()
           param.append('username', this.loginData.userName)

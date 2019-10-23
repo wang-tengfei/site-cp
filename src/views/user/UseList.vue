@@ -46,9 +46,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="nickName" label="昵称" width="120"></el-table-column>
-        <el-table-column prop="age" label="年龄" ></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="120px"></el-table-column>
         <el-table-column prop="phoneNumber" label="手机号"></el-table-column>
+        <el-table-column prop="address" label="地址" ></el-table-column>
         <el-table-column prop="status" label="状态">
           <template  slot-scope="scope">
             <span v-if="scope.row.status === 1">正常</span>

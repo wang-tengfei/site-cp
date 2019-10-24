@@ -1,6 +1,6 @@
 <template>
   <div class="side-menu">
-    <el-menu :default-active="$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" class="slider" router style="border: 0">
+    <el-menu :default-active="$route.path" @select="handlerSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" class="slider" router style="border: 0">
       <el-submenu v-for="(item,index) in updateMenuList" :key="index" :index='item.id'>
         <template slot="title">
           <i :class="item.icon"></i>
@@ -27,6 +27,13 @@ export default {
   methods: {
     currentMenu () {
       console.log('a')
+    },
+    handlerSelect (index, indexPath) {
+      console.log('index is ' + index)
+      console.log('index path is ' + indexPath)
+      let title = this.updateMenuList[index - 1]['title']
+      let subTitle = this.updateMenuList[index - 1]['title']
+      this.$emit('menuName', title, subTitle)
     }
   },
   props: {

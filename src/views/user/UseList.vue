@@ -215,16 +215,17 @@ export default {
     },
     searchUserData () {
       if (!this.searchTime && this.searchData['startTime']) {
-        console.log('delete time')
         delete this.searchData['startTime']
         delete this.searchData['endTime']
       } else if (this.searchTime) {
-        console.log('add time')
         let startTime = parseInt(this.searchTime[0].getTime())
         let endTime = parseInt(this.searchTime[1].getTime())
-        console.log('startTime is ' + startTime + ', endTime is ' + endTime)
         Object.assign(this.searchData, {'startTime': startTime, 'endTime': endTime})
-        console.log(this.searchData.startTime)
+      }
+      if (!this.userName && this.searchData['username']) {
+        delete this.searchData['username']
+      } else if (this.userName) {
+        Object.assign(this.searchData, {'username': this.userName})
       }
       return this.getTableData(this.searchData)
     },

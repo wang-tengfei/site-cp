@@ -19,12 +19,12 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="年龄" prop="age">
-            <el-input v-model.number="addUserData.age"></el-input>
+            <el-input v-model.number="addUserData.age" type="number"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="手机号" prop="phoneNumber">
-            <el-input v-model.number="addUserData.phoneNumber"></el-input>
+            <el-input v-model.number="addUserData.phoneNumber" type="number"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -51,8 +51,8 @@ export default {
         userName: '',
         nickName: '',
         password: '',
-        age: '',
-        phoneNumber: '',
+        age: null,
+        phoneNumber: null,
         zip: '',
         address: ''
       }

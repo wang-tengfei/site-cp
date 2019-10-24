@@ -1,6 +1,6 @@
 <template>
   <div class="edit-info">
-    <el-form :model="editUserData" :rules="this.GLOBAL.userRules" ref="editUserData"  label-width="100px">
+    <el-form :model="editUserData" status-icon :rules="this.GLOBAL.userRules" ref="editUserData"  label-width="100px">
       <el-row>
         <el-col :span="12">
           <el-form-item label="用户名" prop="userName">
@@ -16,12 +16,12 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="年龄" prop="age">
-            <el-input v-model.number="editUserData.age"></el-input>
+            <el-input v-model.number="editUserData.age" type="number"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="手机号" prop="address">
-            <el-input v-model.number="editUserData.phoneNumber"></el-input>
+            <el-input v-model.number="editUserData.phoneNumber" type="number"></el-input>
           </el-form-item>
         </el-col>
       </el-row>

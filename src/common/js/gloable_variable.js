@@ -13,11 +13,10 @@ const userRules = {
     { min: 6, message: '密码最短为6位', trigger: 'blur' }
   ],
   age: [
-    { type: 'number', message: '必须是数字', trigger: 'blur' }
+    { type: 'number', min: 0, message: '年龄必须大于0', trigger: 'blur' }
   ],
   phoneNumber: [
-    { type: 'number', message: '必须是数字', trigger: 'blur' },
-    { len: 11, message: '手机号长度为11位', trigger: 'blur' }
+    { type: 'number', min: 0, length: 11, message: '手机号长度为11位', trigger: 'blur' }
   ],
   email: [
     { type: 'email', message: '必须符合邮箱格式', trigger: 'blur' }

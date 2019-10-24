@@ -6,6 +6,9 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import GlobalVariable from '@/common/js/gloable_variable'
+import GlobalFunction from '@/common/js/gloable_function'
+
 import Axios from 'axios'
 import Moment from 'moment'
 
@@ -19,6 +22,9 @@ Axios.defaults.baseURL = '/api'
 Axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 Vue.prototype.$moment = Moment
+
+Vue.prototype.GLOBAL = GlobalVariable
+Vue.prototype.GLOBALFun = GlobalFunction
 
 /* eslint-disable no-new */
 new Vue({

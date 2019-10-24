@@ -6,10 +6,10 @@
       </div>
       <el-form label-width="80px" status-icon :model="loginData" ref="loginData" :rules="loginRules" class="demo-ruleForm">
         <el-form-item prop="userName" label-width="0">
-          <el-input v-model="loginData.userName" placeholder="请输入用户名" style="width: 100%"></el-input>
+          <el-input v-model="loginData.userName" placeholder="请输入用户名" auto-complete="off" style="width: 100%"></el-input>
         </el-form-item>
         <el-form-item prop="password" label-width="0">
-          <el-input type="password" show-password v-model="loginData.password" placeholder="请输入密码" style="width: 100%"></el-input>
+          <el-input type="password" show-password v-model="loginData.password" placeholder="请输入密码" auto-complete="off" style="width: 100%"></el-input>
         </el-form-item>
       </el-form>
       <div>

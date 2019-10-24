@@ -1,6 +1,6 @@
 <template>
   <div class="edit-info">
-    <el-form :model="addUserData" status-icon :rules="userRules" ref="addUserData" label-width="100px">
+    <el-form :model="addUserData" status-icon :rules="this.GLOBAL.userRules" ref="addUserData" label-width="100px">
       <el-row>
         <el-col :span="12">
           <el-form-item label="用户名" prop="userName">
@@ -19,12 +19,12 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="年龄" prop="age">
-            <el-input type="number" v-model="addUserData.age"></el-input>
+            <el-input v-model.number="addUserData.age"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="手机号" prop="phoneNumber">
-            <el-input type="number" v-model="addUserData.phoneNumber"></el-input>
+            <el-input v-model.number="addUserData.phoneNumber"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -55,33 +55,6 @@ export default {
         phoneNumber: '',
         zip: '',
         address: ''
-      },
-      userRules: {
-        userName: [
-          // { validator: validateName, trigger: 'blur' }
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 20, message: '用户名长度在3到20之间', trigger: 'blur' }
-        ],
-        nickName: [
-          { required: true, message: '请输入昵称', trigger: 'blur' },
-          { min: 3, max: 20, message: '昵称长度在3到20之间', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, message: '密码最短为6位', trigger: 'blur' }
-        ],
-        age: [
-          { min: 0, max: 200, message: '必须是数字', trigger: 'blur' }
-        ],
-        phoneNumber: [
-          { len: 11, message: '手机号长度为11位', trigger: 'blur' }
-        ],
-        email: [
-          { type: 'email', message: '必须符合邮箱格式', trigger: 'blur' }
-        ],
-        address: [
-          { max: 50, message: '最大长度为50', trigger: 'blur' }
-        ]
       }
     }
   },
@@ -89,7 +62,10 @@ export default {
     closeAddDialog (formName) {
       this.$emit('isShowAdd', false)
       this.addUserData = {}
-      this.resetForm(formName)
+      console.log('formName is ' + formName)
+      if (formName) {
+        this.resetForm(formName)
+      }
     },
     addUser (formName) {
       this.$refs[formName].validate((valid) => {
@@ -101,7 +77,7 @@ export default {
                 type: 'success',
                 message: '添加成功!'
               })
-              this.closeAddDialog()
+              this.closeAddDialog(formName)
               this.getTableData()
             } else {
               this.$message({

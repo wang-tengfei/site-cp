@@ -1,6 +1,11 @@
 <template>
-  <div class="side-menu">
-    <el-menu :default-active="$route.path" @select="handlerSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" class="slider" router style="border: 0">
+  <div id="sideMenu" class="side-menu">
+    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
+      <el-radio-button :label="false">展开</el-radio-button>
+      <el-radio-button :label="true">收起</el-radio-button>
+    </el-radio-group>
+    <el-menu :default-active="$route.path" @select="handlerSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b"
+             class="slider" router style="border: 0" :collapse="isCollapse" @open="handleOpen" @close="handleClose">
       <el-submenu v-for="(item,index) in updateMenuList" :key="index" :index='item.id'>
         <template slot="title">
           <i :class="item.icon"></i>
@@ -21,19 +26,33 @@ export default {
   name: 'Aside',
   data: function () {
     return {
-      menuIndex: ''
+      menuIndex: '',
+      isCollapse: false
     }
   },
   methods: {
     currentMenu () {
       console.log('a')
     },
+    handleOpen (key, keyPath) {
+      console.log(key, keyPath)
+    },
+    handleClose (key, keyPath) {
+      console.log(key, keyPath)
+    },
     handlerSelect (index, indexPath) {
-      console.log('index is ' + index)
-      console.log('index path is ' + indexPath)
-      let title = this.updateMenuList[index - 1]['title']
-      let subTitle = this.updateMenuList[index - 1]['title']
-      this.$emit('menuName', title, subTitle)
+      let mIndex = parseInt(indexPath[0])
+      let menu = this.updateMenuList[mIndex - 1]
+      let title = menu['title']
+      let subTitle = null
+      let child = menu['children']
+      for (let x = 0; x < child.length; x++) {
+        if (index === child[x]['index']) {
+          subTitle = child[x]['childTitle']
+        }
+      }
+      let nav = subTitle ? [title, subTitle] : [title]
+      this.$emit('menuName', nav)
     }
   },
   props: {

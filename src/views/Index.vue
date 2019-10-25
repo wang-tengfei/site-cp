@@ -2,12 +2,12 @@
   <el-container>
     <el-header height="80px">
       <!--header-->
-      <my-header v-on:changeIndex="updateAside"></my-header>
+      <my-header v-on:changeIndex="updateAside" v-bind:navTitle="navTitle"></my-header>
     </el-header>
     <el-container>
       <!--左侧菜单-->
       <el-aside width="250px">
-        <my-aside v-bind:updateMenuList="menuList"></my-aside>
+        <my-aside v-bind:updateMenuList="menuList" @menuName="getMenuName"></my-aside>
       </el-aside>
       <el-container>
         <!--main-->
@@ -32,6 +32,7 @@ export default {
   data () {
     return {
       userName: this.$route.query,
+      navTitle: [],
       menuList: '',
       menuList1: [
         {
@@ -77,6 +78,10 @@ export default {
       if (e === '2') {
         this.menuList = this.menuList2
       }
+    },
+    getMenuName (data) {
+      console.log(data)
+      this.navTitle = data
     }
   },
   created () {

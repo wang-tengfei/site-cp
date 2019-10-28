@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div class="data-header">
+    <div class="data-header user-header">
       <el-form v-model="searchData" label-width="100px">
         <el-row>
           <el-col :span="5">
@@ -30,7 +30,7 @@
         </el-row>
       </el-form>
     </div>
-    <div class="data-info">
+    <div class="data-info user-info">
       <el-table :data="tableData" v-loading="loading" border height="509px" size="small" fit stripe highlight-current-row>
         <el-table-column type="selection" label=""></el-table-column>
         <el-table-column type="index" label="序号" min-width="50px"></el-table-column>
@@ -50,14 +50,21 @@
         <el-table-column prop="email" label="邮箱" min-width="120px"></el-table-column>
         <el-table-column prop="phoneNumber" label="手机号"></el-table-column>
         <el-table-column prop="address" label="地址" ></el-table-column>
+        <el-table-column prop="roleId" label="角色" >
+          <template slot-scope="scope">
+            <div :key="index" v-for="(item, index) in roleList">
+              <span v-if="item.roleId === scope.row.roleId">{{item.roleName}}</span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态">
           <template  slot-scope="scope">
             <span v-if="scope.row.status === 1">正常</span>
             <span v-if="scope.row.status === 2">禁用</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="日期" :formatter="formatterDate"></el-table-column>
-        <el-table-column label="操作" width="180px" align="center">
+        <el-table-column prop="createTime"  width="120px" label="日期" :formatter="formatterDate"></el-table-column>
+        <el-table-column label="操作" width="240px" align="center">
           <template slot="header"  slot-scope="scope">
             <el-button @click="addUser()" type="primary" icon="el-icon-plus" >添加</el-button>
           </template>
@@ -69,6 +76,7 @@
               <el-button @click="changeStatus(scope.row, scope.row.status)"  type="primary" icon="el-icon-unlock" title="启用" size="mini" round></el-button>
             </template>
             <el-button @click="editUser(scope.row)" icon="el-icon-edit" title="编辑" size="mini" round></el-button>
+            <el-button @click="assginRole(scope.row)" icon="el-icon-user" title="分配角色" size="mini" round></el-button>
             <el-button @click="deleteDate(scope.row)" type="danger" icon="el-icon-delete" title="删除" size="mini" round></el-button>
           </template>
         </el-table-column>
@@ -88,6 +96,20 @@
     <el-dialog title="编辑用户信息" class="dialog-title" :visible.sync="isShowEdit" width="700px" destroy-on-close>
       <edit-user v-on:isShowEdit=editDialog v-bind:editUserData="editUserData" :getTableData="getTableData"></edit-user>
     </el-dialog>
+    <!--分配角色-->
+    <el-dialog title="分配角色" class="dialog-title" :visible.sync="isShowAssgin" width="500px" destroy-on-close>
+      <el-form v-model="rowData" label-width="100px">
+        <el-form-item label="角色分配">
+          <el-select placeholder="请选状态" v-model="selectedRoleId" default-first-option="1" clearable style="width: 100%">
+            <el-option v-for="item in roleList" :key="item.value" :label="item.roleName" :value="item.roleId"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeAssgin()">取 消</el-button>
+        <el-button type="primary" @click="assginRoleCommit(rowData.id, selectedRoleId)">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -102,6 +124,8 @@ export default {
   },
   data () {
     return {
+      rowData: {},
+      selectedRoleId: null,
       editUserData: '',
       searchData: {},
       searchTime: null,
@@ -109,8 +133,10 @@ export default {
       province: '',
       isShowAdd: false,
       isShowEdit: false,
+      isShowAssgin: false,
       loading: true,
       tableData: [],
+      roleList: [],
       pageIndex: 1,
       pageSize: 10,
       totalSize: 0,
@@ -163,8 +189,43 @@ export default {
   },
   created () {
     this.getTableData()
+    this.getRoleList()
   },
   methods: {
+    assginRoleCommit (userId, selectedRoleId) {
+      this.$axios.post('/vue/user/' + userId + '/role/' + selectedRoleId).then(res => {
+        let data = res.data
+        if (data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.isShowAssgin = false
+          this.getTableData()
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.msg
+          })
+        }
+      })
+    },
+    closeAssgin () {
+      this.isShowAssgin = false
+    },
+    assginRole (row) {
+      console.log(row)
+      this.rowData = row
+      this.isShowAssgin = true
+    },
+    getRoleList () {
+      this.$axios.get('/vue/roles').then(res => {
+        let data = res.data
+        if (data.code === 200) {
+          this.roleList = data.result
+        }
+      })
+    },
     querySearch (queryString, cb) {
       this.$axios.get('/vue/user/username').then(res => {
         var restaurants = res.data.result
@@ -313,19 +374,10 @@ export default {
 </script>
 <style scoped>
   @import '../../common/css/common.css';
-  .content {
-    width: 100%;
-    padding: 0;
-    margin: 0 auto;
-  }
-  .data-header {
+  .user-header {
     height: 50px;
-    width: 90%;
-    margin: 0 auto;
   }
-  .data-info {
-    width: 90%;
-    margin: 0 auto;
+  .user-info {
   }
   .block {
     width: 100%;

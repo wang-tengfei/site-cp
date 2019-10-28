@@ -1,6 +1,21 @@
+/*弹窗样式*/
 .dialog-title {
   text-align: left;
 }
 .dialog-footer {
   text-align: right;
+}
+/*数据展示样式*/
+.content {
+  width: 100%;
+  padding: 0;
+  margin: 0 auto;
+}
+.data-header {
+  width: 90%;
+  margin: 0 auto;
+}
+.data-info {
+  width: 95%;
+  margin: 0 auto;
 }

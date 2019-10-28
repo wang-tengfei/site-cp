@@ -10,7 +10,7 @@
         <!--<el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>-->
       <!--</el-menu>-->
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+<!--        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>-->
         <el-breadcrumb-item :key="index" v-for="(item, index) in navTitle">{{item}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>

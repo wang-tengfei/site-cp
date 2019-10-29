@@ -1,14 +1,14 @@
 <template>
     <div class="content">
       <div class="data-header role-header">
-        <el-form v-model="searchData" label-width="100px">
+        <el-form v-model="searchData" label-width="80px">
           <el-row>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="用户名">
                 <el-input v-model="searchData.roleName"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="10">
               <el-form-item label="时间" align="left">
                 <el-date-picker v-model="searchData.searchTime" type="datetimerange" :picker-options="pickerOptions"
                                 range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>

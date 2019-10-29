@@ -10,7 +10,10 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="操作">
-              <el-input v-model="searchData.type"></el-input>
+<!--              <el-input v-model="searchData.type"></el-input>-->
+              <el-select placeholder="请选状态" v-model="searchData.type" clearable style="width: 100%">
+                <el-option v-for="item in logType" :key="item.value" :label="item.typeName" :value="item.type"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="10">
@@ -49,6 +52,7 @@ export default {
   name: 'LoginLog',
   data () {
     return {
+      logType: [],
       searchData: {},
       tableData: [],
       pageIndex: 1,
@@ -85,8 +89,17 @@ export default {
   },
   created () {
     this.getTableData()
+    this.getLogType()
   },
   methods: {
+    getLogType () {
+      this.$axios.get('/vue/log-type').then(res => {
+        let data = res.data
+        if ((data.code === 200)) {
+          this.logType = data.result
+        }
+      })
+    },
     getTableData (param) {
       let queryData = {page_index: this.pageIndex, page_size: this.pageSize}
       if (param) {

@@ -23,6 +23,9 @@ const userRules = {
   ],
   address: [
     { max: 50, message: '最大长度为50', trigger: 'blur' }
+  ],
+  roleName: [
+    { required: true, message: '该字段不能为空', trigger: 'blur' }
   ]
 }
 

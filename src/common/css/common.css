@@ -16,6 +16,10 @@
   margin: 0 auto;
 }
 .data-info {
-  width: 95%;
   margin: 0 auto;
+}
+.block {
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 10px;
 }

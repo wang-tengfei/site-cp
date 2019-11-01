@@ -15,8 +15,8 @@
       </el-breadcrumb>
     </div>
     <div class="user-info">
-      <el-badge :value="0" :max="99" class="item">
-        <el-button disabled @click="showMsg()" icon="el-icon-bell"></el-button>
+      <el-badge :value="msgTotal" :max="99" class="item">
+        <el-button @click="showMsg()" icon="el-icon-bell"></el-button>
       </el-badge>
       <span>
         <el-dropdown>
@@ -70,12 +70,18 @@
       </el-row>
     </el-dialog>
     <!--未读消息弹窗-->
-    <el-dialog title="未读消息" class="dialog-title" :visible.sync="showMsgDialog" width="800px">
+    <el-dialog title="未读消息" class="dialog-title" :visible.sync="showMsgDialog" width="600px">
       <div class="edit-info">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table :data="messageData" height="300px" style="width: 100%">
+          <el-table-column prop="createTime" :formatter="formatterDate" label="日期"></el-table-column>
+          <el-table-column prop="userName" label="用户"></el-table-column>
+          <el-table-column prop="typeName" label="操作"></el-table-column>
+          <el-table-column prop="logStatus" label="状态">
+            <template  slot-scope="scope">
+              <span v-if="scope.row.logStatus === 0">成功</span>
+              <span v-if="scope.row.logStatus === 1" style="color: red">失败</span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </el-dialog>
@@ -116,7 +122,10 @@ export default {
       userInfoDialog: false,
       showMsgDialog: false,
       updatePasswordDialog: false,
-      tableData: {}
+      tableData: {},
+      timer: null,
+      messageData: [],
+      msgTotal: 0
     }
   },
   methods: {
@@ -132,6 +141,8 @@ export default {
         this.$axios.post('/vue/login-out/' + this.userId).then(res => {
           let data = res.data
           if (data.code === 200) {
+            localStorage.removeItem('loginUser')
+            localStorage.removeItem('token')
             return this.$router.push('/login')
           }
           this.$message({
@@ -210,12 +221,31 @@ export default {
           this.userData = data.result
         }
       })
+    },
+    formatterDate (row, column, cellValue) {
+      return this.$moment(cellValue).format('YYYY-MM-DD hh:mm')
     }
   },
   created () {
     let loginUser = JSON.parse(localStorage.getItem('loginUser'))
-    this.userName = loginUser.userName
-    this.userId = loginUser.userId
+    if (loginUser) {
+      this.userName = loginUser.userName
+      this.userId = loginUser.userId
+      /* 定时获取消息 */
+      this.timer = setInterval(() => {
+        console.log('这是定时器日志')
+        this.$axios.get('/vue/logs').then(res => {
+          let data = res.data
+          if ((data.code === 200)) {
+            this.messageData = data.result
+            this.msgTotal = this.messageData.length
+          }
+        })
+      }, 30000)
+      this.$once('hook:beforeDestroy', () => {
+        clearInterval(this.timer)
+      })
+    }
   },
   props: {
     navTitle: {

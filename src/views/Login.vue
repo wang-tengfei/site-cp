@@ -61,6 +61,7 @@ export default {
             let data = response.data
             if (data.code === 200) {
               localStorage.setItem('loginUser', JSON.stringify(data.result))
+              localStorage.token = data.result.token
               return this.$router.push({path: '/', data: {username: this.loginData.userName}})
             } else {
               this.$message({

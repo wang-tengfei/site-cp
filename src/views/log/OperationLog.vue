@@ -55,7 +55,7 @@
 
 <script>
 export default {
-  name: 'LoginLog',
+  name: 'OperationLog',
   data () {
     return {
       logType: [],

@@ -20,6 +20,29 @@ Vue.component('ElementUI', ElementUI)
 Vue.prototype.$axios = Axios
 Axios.defaults.baseURL = '/api'
 Axios.defaults.headers.post['Content-Type'] = 'application/json'
+Axios.interceptors.request.use(config => {
+  /* add authorization */
+  // console.log(config)
+  if (localStorage.token) {
+    config.headers.Authorization = localStorage.token
+  } else if (config.url !== '/vue/login') {
+    return router.push('/login')
+  }
+  return config
+}, error => {
+  console.log(error)
+  return Promise.reject(error.response.data)
+})
+Axios.interceptors.response.use(res => {
+  let data = res.data
+  if (data.code === 100004 || data.code === 100005 || data.code === 100006) {
+    return router.push('/login')
+  }
+  return res
+}, error => {
+  console.log(error)
+  return Promise.reject(error.response.data)
+})
 
 Vue.prototype.$moment = Moment
 
@@ -30,7 +53,7 @@ Vue.prototype.GLOBALFun = GlobalFunction
 new Vue({
   el: '#app',
   router,
-  components: { App },
+  components: {App},
   template: '<App/>'
 })
 

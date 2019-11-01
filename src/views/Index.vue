@@ -38,7 +38,7 @@ export default {
         {
           id: '1',
           title: '账号管理',
-          icon: 'el-icon-location',
+          icon: 'el-icon-s-custom',
           children: [
             {
               index: '/user-list',
@@ -53,7 +53,7 @@ export default {
         {
           id: '2',
           title: '日志管理',
-          icon: 'el-icon-location',
+          icon: 'el-icon-document',
           children: [
             {
               index: '/log-login',

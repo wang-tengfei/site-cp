@@ -30,6 +30,9 @@ export default {
       isCollapse: false
     }
   },
+  created () {
+    console.log(this.$route.path)
+  },
   methods: {
     currentMenu () {
       console.log('a')

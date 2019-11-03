@@ -16,7 +16,7 @@
         <div style="margin-top: 20px"></div>
         <el-row>
           <el-col :span="12" align="left">
-            <el-checkbox v-model="checked" >记住密码</el-checkbox>
+            <el-checkbox v-model="loginData.checked" >记住密码</el-checkbox>
           </el-col>
           <el-col :span="12" align="right">
             <el-link href="#">忘记密码</el-link>
@@ -36,19 +36,22 @@ export default {
     return {
       loginData: {
         userName: '',
-        password: ''
+        password: '',
+        checked: false
       },
-      checked: false,
       loginRules: {
         userName: [
           // { validator: validateName, trigger: 'blur' }
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          {required: true, message: '请输入用户名', trigger: 'blur'}
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          {required: true, message: '请输入密码', trigger: 'blur'}
         ]
       }
     }
+  },
+  mounted () {
+    this.getCookie()
   },
   methods: {
     login (formName) {
@@ -57,6 +60,12 @@ export default {
           let param = new URLSearchParams()
           param.append('username', this.loginData.userName)
           param.append('password', this.loginData.password)
+          if (this.loginData.checked) {
+            this.setCookie('userName', this.loginData.userName, 7)
+            this.setCookie('password', this.loginData.password, 7)
+          } else {
+            this.setCookie('', '', -1) // 修改2值都为空，天数为负1天就好了
+          }
           this.$axios.post('/vue/login', param).then(response => {
             let data = response.data
             if (data.code === 200) {
@@ -75,6 +84,28 @@ export default {
           return false
         }
       })
+    },
+    // 设置cookie
+    setCookie (name, value, days) { // 设置cookie
+      let d = new Date()
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000))
+      document.cookie = name + '=' + value + '; ' + 'expires=' + d.toUTCString()
+      console.log('set cookie success')
+    },
+    // 读取cookie
+    getCookie () {
+      if (document.cookie.length > 0) {
+        const arr = document.cookie.split('; ') // 这里显示的格式需要切割一下自己可输出看下
+        for (let i = 0; i < arr.length; i++) {
+          const arr2 = arr[i].split('=') // 再次切割
+          // 判断查找相对应的值
+          if (arr2[0] === 'userName') {
+            this.loginData.userName = arr2[1] // 保存到保存数据的地方
+          } else if (arr2[0] === 'password') {
+            this.loginData.password = arr2[1]
+          }
+        }
+      }
     }
   }
 }

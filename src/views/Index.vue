@@ -71,7 +71,7 @@ export default {
           icon: 'el-icon-notebook-2',
           children: [
             {
-              index: '/news-add',
+              index: '/news-list',
               childTitle: '新闻管理'
             },
             {

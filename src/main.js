@@ -5,11 +5,6 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import VueQuillEditor from 'vue-quill-editor'
-// require styles 引入样式
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
 
 import GlobalVariable from '@/common/js/gloable_variable'
 import GlobalFunction from '@/common/js/gloable_function'
@@ -20,8 +15,6 @@ import Moment from 'moment'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.component('ElementUI', ElementUI)
-// 富文本编辑器
-Vue.use(VueQuillEditor)
 
 // http 调用
 Vue.prototype.$axios = Axios

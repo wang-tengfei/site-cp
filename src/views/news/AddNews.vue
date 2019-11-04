@@ -4,13 +4,13 @@
       <el-row class="form-item">
         <el-col :span="1">标题</el-col>
         <el-col :span="23">
-          <el-input v-model="newsForm.title" placeholder="请输入新闻标题" />
+          <el-input v-model="newsForm.newsTitle" placeholder="请输入新闻标题" />
         </el-col>
       </el-row>
       <el-row class="form-item">
         <el-col :span="1">内容</el-col>
         <el-col :span="23" style="background-color: white">
-          <vue-editor id="editor" v-model="newsForm.content"></vue-editor>
+          <vue-editor id="editor" v-model="newsForm.newsContent"></vue-editor>
         </el-col>
       </el-row>
     </el-form>
@@ -29,8 +29,9 @@ export default {
   },
   data: () => ({
     newsForm: {
-      content: '',
-      title: ''
+      newsTitle: '',
+      newsContent: '',
+      type: 1
     },
     editorOption: {}
   }),
@@ -40,8 +41,8 @@ export default {
     gotoNewsList () {
       return this.$router.push('/user-list')
     },
-    addNews (file) {
-      this.$axios.post('/vue/news', {data: this.newsForm}).then(result => {
+    addNews () {
+      this.$axios.post('/vue/news', this.newsForm).then(result => {
         console.log(result)
         let url = result.data.filePath // Get url from response
         console.log(url)

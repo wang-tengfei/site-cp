@@ -68,7 +68,7 @@ export default {
         {
           id: '3',
           title: '新闻管理',
-          icon: 'el-icon-document',
+          icon: 'el-icon-notebook-2',
           children: [
             {
               index: '/news-add',

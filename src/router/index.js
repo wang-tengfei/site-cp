@@ -4,6 +4,7 @@ import Index from '@/views/Index'
 import UserList from '@/views/user/UseList'
 import RoleList from '@/views/role/RoleList'
 import LoginLog from '@/views/log/LoginLog'
+import AddNews from '@/views/news/AddNews'
 import OperationLog from '@/views/log/OperationLog'
 import Login from '@/views/Login'
 
@@ -35,6 +36,11 @@ export default new Router({
           path: '/log-operation',
           name: 'OperationLog',
           component: OperationLog
+        },
+        {
+          path: '/news-add',
+          name: 'AddNews',
+          component: AddNews
         }
       ]
     },

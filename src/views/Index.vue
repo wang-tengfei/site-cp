@@ -64,6 +64,21 @@ export default {
               childTitle: '操作日志'
             }
           ]
+        },
+        {
+          id: '3',
+          title: '新闻管理',
+          icon: 'el-icon-document',
+          children: [
+            {
+              index: '/news-add',
+              childTitle: '新闻管理'
+            },
+            {
+              index: '/log-operation',
+              childTitle: '操作日志'
+            }
+          ]
         }
       ],
       menuList2: []
